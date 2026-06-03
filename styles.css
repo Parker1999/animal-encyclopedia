@@ -4249,3 +4249,27 @@ p.game-source-help {
   padding: 12px !important;
   box-shadow: inset 0 0 12px rgba(79, 70, 229, 0.3) !important;
 }
+
+.speaker-btn {
+  margin-left: 8px;
+  padding: 6px 9px;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.speaker-btn:hover {
+  background: #f3f4f6;
+}
+
+.game-criterion-speaker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 34px;
+}
