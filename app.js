@@ -34,14 +34,40 @@ function renderUiSprite(src, alt = "", className = "ui-sprite") {
   return `<img class="${className}" src="${escapeAttribute(src)}"${altAttribute}>`;
 }
 
-const criteria = [
-  { id: "hasLegs", label: "다리가 있는가?" },
-  { id: "hasWings", label: "날개가 있는가?" },
-  { id: "hasFins", label: "지느러미가 있는가?" },
-  { id: "inWater", label: "물에서 사는가?" },
-  { id: "crawls", label: "기어서 이동하는가?" }
-];
 
+
+const criteria = [
+  {
+    id: "hasLegs",
+    label: "다리가 있는가?",
+    ru: "Есть ли у него ноги?",
+    vi: "Nó có chân không?"
+  },
+  {
+    id: "hasWings",
+    label: "날개가 있는가?",
+    ru: "Есть ли у него крылья?",
+    vi: "Nó có cánh không?"
+  },
+  {
+    id: "hasFins",
+    label: "지느러미가 있는가?",
+    ru: "Есть ли у него плавники?",
+    vi: "Nó có vây không?"
+  },
+  {
+    id: "inWater",
+    label: "물에서 사는가?",
+    ru: "Он живёт в воде?",
+    vi: "Nó sống dưới nước không?"
+  },
+  {
+    id: "crawls",
+    label: "기어서 이동하는가?",
+    ru: "Он ползает?",
+    vi: "Nó bò không?"
+  }
+];
 const defaultMissionSelections = [
   {
     id: "around",
@@ -1132,14 +1158,123 @@ function renderMissionPanel() {
   `;
 }
 
+
+function speakText(text, lang) {
+  if (!("speechSynthesis" in window)) {
+    alert("이 브라우저는 음성 읽기 기능을 지원하지 않습니다.");
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = lang;
+  utterance.rate = 0.85;
+
+  window.speechSynthesis.speak(utterance);
+}
+
+function speakCriterionById(criterionId) {
+  const criterion = criteria.find(item => item.id === criterionId);
+
+  if (!criterion) {
+    return;
+  }
+
+  speakText(criterion.ru, "ru-RU");
+
+  setTimeout(() => {
+    speakText(criterion.vi, "vi-VN");
+  }, 1600);
+}
+
+function speakText(text, lang, options = {}) {
+  if (!("speechSynthesis" in window)) {
+    alert("이 브라우저는 음성 읽기 기능을 지원하지 않습니다.");
+    return null;
+  }
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = lang;
+  utterance.rate = options.rate || 0.85;
+  utterance.pitch = options.pitch || 1;
+
+  return utterance;
+}
+
+function speakCriterionById(criterionId) {
+  if (!("speechSynthesis" in window)) {
+    alert("이 브라우저는 음성 읽기 기능을 지원하지 않습니다.");
+    return;
+  }
+
+  const criterion = criteria.find(item => item.id === criterionId);
+
+  if (!criterion) {
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const utterances = [
+    {
+      text: criterion.ru,
+      lang: "ru-RU"
+    },
+    {
+      text: criterion.vi,
+      lang: "vi-VN"
+    }
+  ];
+
+  utterances.forEach(item => {
+    const utterance = speakText(item.text, item.lang, { rate: 0.85 });
+    if (utterance) {
+      window.speechSynthesis.speak(utterance);
+    }
+  });
+}
+
+function renderGameCriterionSpeakerButton() {
+  if (!els.gameCriterion) {
+    return;
+  }
+
+  const existingButton = document.getElementById("gameCriterionSpeakerButton");
+
+  if (existingButton) {
+    return;
+  }
+
+  const button = document.createElement("button");
+  button.id = "gameCriterionSpeakerButton";
+  button.type = "button";
+  button.className = "speaker-btn game-criterion-speaker";
+  button.textContent = "🔊";
+  button.title = "선택한 기준을 러시아어와 베트남어로 듣기";
+  button.setAttribute("aria-label", "선택한 기준을 러시아어와 베트남어로 듣기");
+
+  button.addEventListener("click", event => {
+    event.preventDefault();
+    event.stopPropagation();
+    speakCriterionById(els.gameCriterion.value);
+  });
+
+  els.gameCriterion.insertAdjacentElement("afterend", button);
+}
+
+
 function renderGameCriterionOptions() {
   els.gameCriterion.innerHTML = "";
+
   criteria.forEach(criterion => {
     const option = document.createElement("option");
     option.value = criterion.id;
     option.textContent = criterion.label;
     els.gameCriterion.append(option);
   });
+
+  renderGameCriterionSpeakerButton();
 }
 
 function renderAnimals() {
@@ -2414,8 +2549,8 @@ function startNewRound() {
 
 function updateGameHints() {
   const criterion = criteria.find(item => item.id === state.game.criterion);
-  els.yesHint.textContent = `${criterion.label} - 그렇다`;
-  els.noHint.textContent = `${criterion.label} - 그렇지 않다`;
+  els.yesHint.textContent = `${criterion.label} - 그렇다 (O)`;
+  els.noHint.textContent = `${criterion.label} - 그렇지 않다 (X)`;
 }
 
 function renderGameBoard() {
