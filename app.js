@@ -35,39 +35,39 @@ function renderUiSprite(src, alt = "", className = "ui-sprite") {
 }
 
 
-
 const criteria = [
   {
     id: "hasLegs",
-    label: "다리가 있는가?",
+    label: "🦵 다리가 있는가?",
     ru: "Есть ли у него ноги?",
     vi: "Nó có chân không?"
   },
   {
     id: "hasWings",
-    label: "날개가 있는가?",
+    label: "🕊️ 날개가 있는가?",
     ru: "Есть ли у него крылья?",
     vi: "Nó có cánh không?"
   },
   {
     id: "hasFins",
-    label: "지느러미가 있는가?",
+    label: "🐟 지느러미가 있는가?",
     ru: "Есть ли у него плавники?",
     vi: "Nó có vây không?"
   },
   {
     id: "inWater",
-    label: "물에서 사는가?",
+    label: "💧 물에서 사는가?",
     ru: "Он живёт в воде?",
     vi: "Nó sống dưới nước không?"
   },
   {
     id: "crawls",
-    label: "기어서 이동하는가?",
+    label: "🐍 기어서 이동하는가?",
     ru: "Он ползает?",
     vi: "Nó bò không?"
   }
 ];
+
 const defaultMissionSelections = [
   {
     id: "around",
